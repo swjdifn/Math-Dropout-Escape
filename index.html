@@ -7,7 +7,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- 학년 선택 버튼 (상단에 배치) -->
         <div class="grade-selector">
             <h2>학년 선택</h2>
             <div class="grade-buttons">
@@ -33,13 +32,11 @@
             </div>
         </div>
 
-        <!-- 문제와 입력 -->
         <div class="quiz-area" id="quizArea" style="display: none;">
             <h1 id="question"></h1>
             <input type="number" id="answerInput" placeholder="정답 입력">
             <div class="buttons">
                 <button id="submitButton" onclick="submitAnswer()">제출</button>
-                <button id="modeButton" onclick="switchMode()">모드 변경 (현재: <span id="modeDisplay">20문항</span>)</button>
             </div>
             <p>점수: <span id="score">0</span> / <span id="total">0</span></p>
             <p id="feedback"></p>

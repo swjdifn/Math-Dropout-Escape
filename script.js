@@ -2,8 +2,7 @@ let currentLevel = "";
 let currentGrade = 1;
 let score = 0;
 let totalQuestions = 0;
-let isLimitedMode = true;
-const maxQuestions = 20;
+let consecutiveCorrect = 0;
 
 const correctMessages = [
     "정답이야! 잘했어!",
@@ -15,19 +14,18 @@ const correctMessages = [
     "정답이야! 계속 힘내!"
 ];
 
-// 게임 시작
 function startGame(level, grade) {
     currentLevel = level;
     currentGrade = grade;
     score = 0;
     totalQuestions = 0;
+    consecutiveCorrect = 0;
     document.getElementById("score").innerText = score;
     document.getElementById("total").innerText = totalQuestions;
     document.getElementById("feedback").innerText = "";
     document.getElementById("quizArea").style.display = "block";
     generateQuestion();
 
-    // 엔터키 이벤트 리스너 추가
     document.getElementById("answerInput").addEventListener("keypress", function(event) {
         if (event.key === "Enter" || event.keyCode === 13) {
             submitAnswer();
@@ -35,17 +33,10 @@ function startGame(level, grade) {
     });
 }
 
-// 문제 생성
 function generateQuestion() {
-    if (isLimitedMode && totalQuestions >= maxQuestions) {
-        endGame();
-        return;
-    }
-
     let question = "";
     let answer;
     let submitButton = document.getElementById("submitButton");
-    let modeButton = document.getElementById("modeButton");
 
     if (currentLevel === "elementary") {
         if (currentGrade === 1) {
@@ -60,8 +51,8 @@ function generateQuestion() {
             question = `${num1} + ${num2} = ?`;
             answer = num1 + num2;
         } else if (currentGrade === 3) {
-            let num1 = (Math.floor(Math.random() * 9) + 1) * 100;
-            let num2 = (Math.floor(Math.random() * 9) + 1) * 100;
+            let num1 = Math.floor(Math.random() * 900) + 100;
+            let num2 = Math.floor(Math.random() * 900) + 100;
             question = `${num1} + ${num2} = ?`;
             answer = num1 + num2;
         } else if (currentGrade === 4) {
@@ -93,16 +84,12 @@ function generateQuestion() {
             resultDenom /= divisorGcd;
             answer = `${resultNum}/${resultDenom}`;
         }
-        // 초등 과정에서는 버튼 활성화
         submitButton.disabled = false;
-        modeButton.disabled = false;
     } else {
-        // 중고 과정에서는 버튼 비활성화
         question = "아직 준비 중이에요!";
         answer = "";
         submitButton.disabled = true;
-        modeButton.disabled = true;
-        document.getElementById("feedback").innerText = "이 학년은 준비 중이라 제출과 모드 변경이 불가능해요.";
+        document.getElementById("feedback").innerText = "이 학년은 준비 중이라 제출이 불가능해요.";
     }
 
     document.getElementById("question").innerText = question;
@@ -110,7 +97,6 @@ function generateQuestion() {
     window.correctAnswer = answer;
 }
 
-// 답 제출
 function submitAnswer() {
     let userAnswer = document.getElementById("answerInput").value;
     totalQuestions++;
@@ -120,24 +106,32 @@ function submitAnswer() {
         score++;
         document.getElementById("score").innerText = score;
         let randomMessage = correctMessages[Math.floor(Math.random() * correctMessages.length)];
+        
+        if (currentGrade <= 2 && consecutiveCorrect >= 4) {
+            randomMessage += " 다음 단계를 도전해볼까?";
+            consecutiveCorrect = 0;
+        } else {
+            consecutiveCorrect++;
+        }
         document.getElementById("feedback").innerText = randomMessage;
+        setTimeout(generateQuestion, 1000);
     } else {
-        document.getElementById("feedback").innerText = `틀렸어... 정답은 ${window.correctAnswer}야.`;
+        let feedback = `틀렸어... 정답은 ${window.correctAnswer}야. `;
+        if (currentGrade >= 4 && currentGrade <= 6) {
+            feedback += getHint();
+        }
+        document.getElementById("feedback").innerText = feedback;
+        setTimeout(generateQuestion, 2000);
     }
-
-    setTimeout(generateQuestion, 50);
 }
 
-// 모드 전환
-function switchMode() {
-    isLimitedMode = !isLimitedMode;
-    document.getElementById("modeDisplay").innerText = isLimitedMode ? "20문항" : "무한";
-}
-
-// 게임 종료
-function endGame() {
-    document.getElementById("question").innerText = "게임 끝!";
-    document.getElementById("answerInput").style.display = "none";
-    document.getElementById("buttons").style.display = "none";
-    document.getElementById("feedback").innerText = `최종 점수: ${score}/${maxQuestions}`;
+function getHint() {
+    if (currentGrade === 4) {
+        return "힌트: 두 숫자를 한 줄씩 곱한 뒤 더해보세요.";
+    } else if (currentGrade === 5) {
+        return "힌트: 괄호를 사용해 순서를 정하고 계산하세요.";
+    } else if (currentGrade === 6) {
+        return "힌트: 분수를 통분한 뒤 나눠보세요.";
+    }
+    return "";
 }
