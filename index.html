@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Math Dropout Escape</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 학년 선택 버튼 (상단에 배치) -->
+        <div class="grade-selector">
+            <h2>학년 선택</h2>
+            <div class="grade-buttons">
+                <h3>초등</h3>
+                <button onclick="startGame('elementary', 1)">초1</button>
+                <button onclick="startGame('elementary', 2)">초2</button>
+                <button onclick="startGame('elementary', 3)">초3</button>
+                <button onclick="startGame('elementary', 4)">초4</button>
+                <button onclick="startGame('elementary', 5)">초5</button>
+                <button onclick="startGame('elementary', 6)">초6</button>
+            </div>
+            <div class="grade-buttons">
+                <h3>중등</h3>
+                <button onclick="startGame('middle', 1)">중1</button>
+                <button onclick="startGame('middle', 2)">중2</button>
+                <button onclick="startGame('middle', 3)">중3</button>
+            </div>
+            <div class="grade-buttons">
+                <h3>고등</h3>
+                <button onclick="startGame('high', 1)">고1</button>
+                <button onclick="startGame('high', 2)">고2</button>
+                <button onclick="startGame('high', 3)">고3</button>
+            </div>
+        </div>
+
+        <!-- 문제와 입력 -->
+        <div class="quiz-area" id="quizArea" style="display: none;">
+            <h1 id="question"></h1>
+            <input type="number" id="answerInput" placeholder="정답 입력">
+            <div class="buttons">
+                <button id="submitButton" onclick="submitAnswer()">제출</button>
+                <button id="modeButton" onclick="switchMode()">모드 변경 (현재: <span id="modeDisplay">20문항</span>)</button>
+            </div>
+            <p>점수: <span id="score">0</span> / <span id="total">0</span></p>
+            <p id="feedback"></p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
